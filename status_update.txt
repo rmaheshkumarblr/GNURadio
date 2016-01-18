@@ -1,0 +1,3 @@
+Got some decoded output in the following configuration.
+Gain:37
+Channel: 161 - 5805.0 Khz , 11a  ( LMS ) - 20 MHz

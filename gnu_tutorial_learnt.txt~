@@ -1,0 +1,13 @@
+
+http://www.csun.edu/~skatz/katzpage/sdr_project/sdr/grc_tutorial1.pdf
+http://www.csun.edu/~skatz/katzpage/sdr_project/sdr/grc_tutorial2.pdf
+http://www.csun.edu/~skatz/katzpage/sdr_project/sdr/grc_tutorial3.pdf
+http://www.csun.edu/~skatz/katzpage/sdr_project/sdr/grc_tutorial4.pdf
+http://files.ettus.com/tutorials/labs/Lab_1-5.pdf
+
+Signal Source - SampleRate can be set based on requirement using a variable if required. (  In signal processing, sampling is the reduction of a continuous signal to a discrete signal. A common example is the conversion of a sound wave (a continuous signal) to a sequence of samples (a discrete-time signal). )
+
+Setting the Marker to Dot Large shows the actual sample values collected in the form of dots ( it is directly related to the sample rate set - Ex: If the sampling rate was 32Khz ==>> 32000 samples/second = 32 samples/ms. 
+
+
+FFT plot is Power(dB) (Y-axis) again Frequency(kHz)

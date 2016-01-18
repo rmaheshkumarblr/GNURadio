@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Sun Jan 17 17:32:34 2016
+# Generated: Sun Jan 17 17:51:33 2016
 ##################################################
 
 if __name__ == '__main__':
@@ -19,13 +19,13 @@ if __name__ == '__main__':
 from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
-from gnuradio import filter
 from gnuradio import gr
 from gnuradio import wxgui
 from gnuradio.eng_option import eng_option
 from gnuradio.fft import window
 from gnuradio.filter import firdes
 from gnuradio.wxgui import fftsink2
+from gnuradio.wxgui import forms
 from gnuradio.wxgui import scopesink2
 from grc_gnuradio import wxgui as grc_wxgui
 from optparse import OptionParser
@@ -43,10 +43,43 @@ class top_block(grc_wxgui.top_block_gui):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 32000
+        self.level2 = level2 = 0.5
+        self.freq2 = freq2 = 800
 
         ##################################################
         # Blocks
         ##################################################
+        self._level2_text_box = forms.text_box(
+        	parent=self.GetWin(),
+        	value=self.level2,
+        	callback=self.set_level2,
+        	label='level2',
+        	converter=forms.float_converter(),
+        )
+        self.Add(self._level2_text_box)
+        _freq2_sizer = wx.BoxSizer(wx.VERTICAL)
+        self._freq2_text_box = forms.text_box(
+        	parent=self.GetWin(),
+        	sizer=_freq2_sizer,
+        	value=self.freq2,
+        	callback=self.set_freq2,
+        	label='freq2',
+        	converter=forms.float_converter(),
+        	proportion=0,
+        )
+        self._freq2_slider = forms.slider(
+        	parent=self.GetWin(),
+        	sizer=_freq2_sizer,
+        	value=self.freq2,
+        	callback=self.set_freq2,
+        	minimum=10,
+        	maximum=2000,
+        	num_steps=100,
+        	style=wx.SL_HORIZONTAL,
+        	cast=float,
+        	proportion=1,
+        )
+        self.Add(_freq2_sizer)
         self.wxgui_scopesink2_0 = scopesink2.scope_sink_f(
         	self.GetWin(),
         	title="Scope Plot",
@@ -77,34 +110,47 @@ class top_block(grc_wxgui.top_block_gui):
         	peak_hold=False,
         )
         self.Add(self.wxgui_fftsink2_0.win)
-        self.low_pass_filter_0 = filter.fir_filter_fff(1, firdes.low_pass(
-        	1, samp_rate, 1000, 200, firdes.WIN_RECTANGULAR, 6.76))
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_float*1, samp_rate,True)
-        self.blocks_multiply_xx_0 = blocks.multiply_vff(1)
-        self.analog_sig_source_x_0_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 800, 0.5, 0)
+        self.blocks_add_xx_0 = blocks.add_vff(1)
+        self.analog_sig_source_x_0_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, freq2, level2, 0)
         self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 1000, 0.5, 0)
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 0))    
-        self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_multiply_xx_0, 1))    
-        self.connect((self.blocks_multiply_xx_0, 0), (self.low_pass_filter_0, 0))    
+        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_add_xx_0, 0))    
+        self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_add_xx_0, 1))    
+        self.connect((self.blocks_add_xx_0, 0), (self.blocks_throttle_0, 0))    
         self.connect((self.blocks_throttle_0, 0), (self.wxgui_fftsink2_0, 0))    
         self.connect((self.blocks_throttle_0, 0), (self.wxgui_scopesink2_0, 0))    
-        self.connect((self.low_pass_filter_0, 0), (self.blocks_throttle_0, 0))    
 
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.wxgui_scopesink2_0.set_sample_rate(self.samp_rate)
-        self.wxgui_fftsink2_0.set_sample_rate(self.samp_rate)
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
-        self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate)
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 1000, 200, firdes.WIN_RECTANGULAR, 6.76))
+        self.wxgui_fftsink2_0.set_sample_rate(self.samp_rate)
+        self.wxgui_scopesink2_0.set_sample_rate(self.samp_rate)
+        self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate)
+
+    def get_level2(self):
+        return self.level2
+
+    def set_level2(self, level2):
+        self.level2 = level2
+        self._level2_text_box.set_value(self.level2)
+        self.analog_sig_source_x_0_0.set_amplitude(self.level2)
+
+    def get_freq2(self):
+        return self.freq2
+
+    def set_freq2(self, freq2):
+        self.freq2 = freq2
+        self._freq2_slider.set_value(self.freq2)
+        self._freq2_text_box.set_value(self.freq2)
+        self.analog_sig_source_x_0_0.set_frequency(self.freq2)
 
 
 def main(top_block_cls=top_block, options=None):
