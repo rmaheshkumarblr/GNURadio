@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Wifi Rx
-# Generated: Wed Jan 20 17:54:58 2016
+# Title: Wifi Rx Only Power
+# Generated: Wed Jan 20 17:51:00 2016
 ##################################################
 
 if __name__ == '__main__':
@@ -25,21 +25,20 @@ from gnuradio import wxgui
 from gnuradio.eng_option import eng_option
 from gnuradio.fft import window
 from gnuradio.filter import firdes
+from gnuradio.wxgui import fftsink2
 from gnuradio.wxgui import forms
-from gnuradio.wxgui import numbersink2
 from gnuradio.wxgui import scopesink2
 from grc_gnuradio import wxgui as grc_wxgui
 from optparse import OptionParser
-import foo
 import ieee802_11
 import time
 import wx
 
 
-class wifi_rx(grc_wxgui.top_block_gui):
+class wifi_rx_only_power(grc_wxgui.top_block_gui):
 
     def __init__(self):
-        grc_wxgui.top_block_gui.__init__(self, title="Wifi Rx")
+        grc_wxgui.top_block_gui.__init__(self, title="Wifi Rx Only Power")
         _icon_path = "/usr/share/icons/hicolor/32x32/apps/gnuradio-grc.png"
         self.SetIcon(wx.Icon(_icon_path, wx.BITMAP_TYPE_ANY))
 
@@ -70,6 +69,7 @@ class wifi_rx(grc_wxgui.top_block_gui):
         self.nb = self.nb = wx.Notebook(self.GetWin(), style=wx.NB_TOP)
         self.nb.AddPage(grc_wxgui.Panel(self.nb), "constellation")
         self.nb.AddPage(grc_wxgui.Panel(self.nb), "autocorrelation")
+        self.nb.AddPage(grc_wxgui.Panel(self.nb), "FFT")
         self.Add(self.nb)
         self._lo_offset_chooser = forms.drop_down(
         	parent=self.GetWin(),
@@ -150,23 +150,22 @@ class wifi_rx(grc_wxgui.top_block_gui):
         	y_axis_label="Counts",
         )
         self.nb.GetPage(0).Add(self.wxgui_scopesink1.win)
-        self.wxgui_numbersink2_0 = numbersink2.number_sink_f(
-        	self.GetWin(),
-        	unit="%",
-        	minval=0,
-        	maxval=100,
-        	factor=1.0,
-        	decimal_places=2,
+        self.wxgui_fftsink2_0 = fftsink2.fft_sink_c(
+        	self.nb.GetPage(2).GetWin(),
+        	baseband_freq=5.825e09,
+        	y_per_div=10,
+        	y_divs=10,
         	ref_level=0,
-        	sample_rate=1,
-        	number_rate=15,
-        	average=True,
-        	avg_alpha=0.02,
-        	label="Frame Error Rate",
+        	ref_scale=2.0,
+        	sample_rate=10e6,
+        	fft_size=1024,
+        	fft_rate=15,
+        	average=False,
+        	avg_alpha=None,
+        	title="FFT Plot",
         	peak_hold=False,
-        	show_gauge=True,
         )
-        self.Add(self.wxgui_numbersink2_0.win)
+        self.nb.GetPage(2).Add(self.wxgui_fftsink2_0.win)
         self.uhd_usrp_source_0 = uhd.usrp_source(
         	",".join(("", "")),
         	uhd.stream_args(
@@ -179,20 +178,15 @@ class wifi_rx(grc_wxgui.top_block_gui):
         self.uhd_usrp_source_0.set_gain(gain, 0)
         self.ieee802_11_ofdm_sync_short_0 = ieee802_11.ofdm_sync_short(0.56, 2, False, False)
         self.ieee802_11_ofdm_sync_long_0 = ieee802_11.ofdm_sync_long(sync_length, True, False)
-        self.ieee802_11_ofdm_parse_mac_0 = ieee802_11.ofdm_parse_mac(False, True)
         self.ieee802_11_ofdm_equalize_symbols_0 = ieee802_11.ofdm_equalize_symbols(chan_est, False)
         self.ieee802_11_ofdm_decode_signal_0 = ieee802_11.ofdm_decode_signal(True, False)
-        self.ieee802_11_ofdm_decode_mac_0 = ieee802_11.ofdm_decode_mac(True, True)
         self.ieee802_11_moving_average_xx_1 = ieee802_11.moving_average_ff(window_size + 16)
         self.ieee802_11_moving_average_xx_0 = ieee802_11.moving_average_cc(window_size)
-        self.foo_wireshark_connector_0 = foo.wireshark_connector(127, False)
         self.fft_vxx_0 = fft.fft_vcc(64, True, (window.rectangular(64)), True, 1)
+        self.blocks_vector_to_stream_1 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, 64)
         self.blocks_vector_to_stream_0 = blocks.vector_to_stream(gr.sizeof_gr_complex*1, 48)
         self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_gr_complex*1, 64)
-        self.blocks_pdu_to_tagged_stream_0 = blocks.pdu_to_tagged_stream(blocks.float_t, "packet_len")
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, "/home/furonics/GNURadio/ofdm3.pcap", True)
-        self.blocks_file_sink_0.set_unbuffered(True)
         self.blocks_divide_xx_0 = blocks.divide_ff(1)
         self.blocks_delay_0_0 = blocks.delay(gr.sizeof_gr_complex*1, 16)
         self.blocks_delay_0 = blocks.delay(gr.sizeof_gr_complex*1, sync_length)
@@ -203,9 +197,6 @@ class wifi_rx(grc_wxgui.top_block_gui):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.ieee802_11_ofdm_decode_mac_0, 'out'), (self.foo_wireshark_connector_0, 'in'))    
-        self.msg_connect((self.ieee802_11_ofdm_decode_mac_0, 'out'), (self.ieee802_11_ofdm_parse_mac_0, 'in'))    
-        self.msg_connect((self.ieee802_11_ofdm_parse_mac_0, 'fer'), (self.blocks_pdu_to_tagged_stream_0, 'pdus'))    
         self.connect((self.blocks_complex_to_mag_0, 0), (self.blocks_divide_xx_0, 0))    
         self.connect((self.blocks_complex_to_mag_squared_0, 0), (self.ieee802_11_moving_average_xx_1, 0))    
         self.connect((self.blocks_conjugate_cc_0, 0), (self.blocks_multiply_xx_0, 1))    
@@ -215,16 +206,15 @@ class wifi_rx(grc_wxgui.top_block_gui):
         self.connect((self.blocks_divide_xx_0, 0), (self.ieee802_11_ofdm_sync_short_0, 2))    
         self.connect((self.blocks_divide_xx_0, 0), (self.wxgui_scopesink2_0, 0))    
         self.connect((self.blocks_multiply_xx_0, 0), (self.ieee802_11_moving_average_xx_0, 0))    
-        self.connect((self.blocks_pdu_to_tagged_stream_0, 0), (self.wxgui_numbersink2_0, 0))    
         self.connect((self.blocks_stream_to_vector_0, 0), (self.fft_vxx_0, 0))    
         self.connect((self.blocks_vector_to_stream_0, 0), (self.wxgui_scopesink1, 0))    
+        self.connect((self.blocks_vector_to_stream_1, 0), (self.wxgui_fftsink2_0, 0))    
+        self.connect((self.fft_vxx_0, 0), (self.blocks_vector_to_stream_1, 0))    
         self.connect((self.fft_vxx_0, 0), (self.ieee802_11_ofdm_equalize_symbols_0, 0))    
-        self.connect((self.foo_wireshark_connector_0, 0), (self.blocks_file_sink_0, 0))    
         self.connect((self.ieee802_11_moving_average_xx_0, 0), (self.blocks_complex_to_mag_0, 0))    
         self.connect((self.ieee802_11_moving_average_xx_0, 0), (self.ieee802_11_ofdm_sync_short_0, 1))    
         self.connect((self.ieee802_11_moving_average_xx_1, 0), (self.blocks_divide_xx_0, 1))    
         self.connect((self.ieee802_11_ofdm_decode_signal_0, 0), (self.blocks_vector_to_stream_0, 0))    
-        self.connect((self.ieee802_11_ofdm_decode_signal_0, 0), (self.ieee802_11_ofdm_decode_mac_0, 0))    
         self.connect((self.ieee802_11_ofdm_equalize_symbols_0, 0), (self.ieee802_11_ofdm_decode_signal_0, 0))    
         self.connect((self.ieee802_11_ofdm_sync_long_0, 0), (self.blocks_stream_to_vector_0, 0))    
         self.connect((self.ieee802_11_ofdm_sync_short_0, 0), (self.blocks_delay_0, 0))    
@@ -292,7 +282,7 @@ class wifi_rx(grc_wxgui.top_block_gui):
         self.ieee802_11_ofdm_equalize_symbols_0.set_algorithm(self.chan_est)
 
 
-def main(top_block_cls=wifi_rx, options=None):
+def main(top_block_cls=wifi_rx_only_power, options=None):
 
     tb = top_block_cls()
     tb.Start(True)
