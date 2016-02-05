@@ -720,11 +720,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>file</key>
-      <value>/home/furonics/GNURadio/ofdm2.pcap</value>
+      <value>/home/furonics/GNURadio/ofdm4thFeb2016_1.pcap</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -818,7 +818,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1085,7 +1085,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1226,7 +1226,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1367,7 +1367,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2634,7 +2634,7 @@
     </param>
     <param>
       <key>baseband_freq</key>
-      <value>5.825e09</value>
+      <value>5.805e09</value>
     </param>
     <param>
       <key>alias</key>
@@ -2753,7 +2753,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>factor</key>
@@ -2761,7 +2761,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(520, 1355)</value>
+      <value>(632, 1379)</value>
     </param>
     <param>
       <key>_rotation</key>
