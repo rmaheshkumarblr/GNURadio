@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Wifi Rx Only Power
-# Generated: Thu Feb  4 22:27:42 2016
+# Generated: Mon Feb  8 16:22:19 2016
 ##################################################
 
 if __name__ == '__main__':
@@ -171,15 +171,15 @@ class wifi_rx_only_power(grc_wxgui.top_block_gui):
         self.Add(self.wxgui_numbersink2_0.win)
         self.wxgui_fftsink2_0 = fftsink2.fft_sink_c(
         	self.nb.GetPage(2).GetWin(),
-        	baseband_freq=5.805e09,
+        	baseband_freq=580.5*10e6,
         	y_per_div=10,
         	y_divs=10,
-        	ref_level=0,
+        	ref_level=gain,
         	ref_scale=2.0,
-        	sample_rate=10e6,
+        	sample_rate=samp_rate,
         	fft_size=1024,
         	fft_rate=15,
-        	average=False,
+        	average=True,
         	avg_alpha=None,
         	title="FFT Plot",
         	peak_hold=False,
@@ -210,6 +210,8 @@ class wifi_rx_only_power(grc_wxgui.top_block_gui):
         self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_gr_complex*1, 64)
         self.blocks_pdu_to_tagged_stream_0 = blocks.pdu_to_tagged_stream(blocks.float_t, "packet_len")
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
+        self.blocks_file_sink_1 = blocks.file_sink(gr.sizeof_gr_complex*1, "/home/furonics/GNURadio/test", False)
+        self.blocks_file_sink_1.set_unbuffered(False)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, "/home/furonics/GNURadio/ofdm4thFeb2016_1.pcap", True)
         self.blocks_file_sink_0.set_unbuffered(True)
         self.blocks_divide_xx_0 = blocks.divide_ff(1)
@@ -237,6 +239,7 @@ class wifi_rx_only_power(grc_wxgui.top_block_gui):
         self.connect((self.blocks_pdu_to_tagged_stream_0, 0), (self.wxgui_numbersink2_0, 0))    
         self.connect((self.blocks_stream_to_vector_0, 0), (self.fft_vxx_0, 0))    
         self.connect((self.blocks_vector_to_stream_0, 0), (self.wxgui_scopesink1, 0))    
+        self.connect((self.blocks_vector_to_stream_1, 0), (self.blocks_file_sink_1, 0))    
         self.connect((self.blocks_vector_to_stream_1, 0), (self.wxgui_fftsink2_0, 0))    
         self.connect((self.fft_vxx_0, 0), (self.blocks_vector_to_stream_1, 0))    
         self.connect((self.fft_vxx_0, 0), (self.ieee802_11_ofdm_equalize_symbols_0, 0))    
@@ -277,6 +280,7 @@ class wifi_rx_only_power(grc_wxgui.top_block_gui):
         self._samp_rate_chooser.set_value(self.samp_rate)
         self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
         self.wxgui_scopesink2_0.set_sample_rate(self.samp_rate)
+        self.wxgui_fftsink2_0.set_sample_rate(self.samp_rate)
 
     def get_lo_offset(self):
         return self.lo_offset

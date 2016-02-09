@@ -1,0 +1,2 @@
+addpath('/home/furonics/gnuradio/gr-utils/octave')
+data_oct = read_complex_binary('/home/furonics/GNURadio/test')
