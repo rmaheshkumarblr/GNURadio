@@ -1,0 +1,8 @@
+addpath('/home/furonics/gnuradio/gr-utils/octave') %Load the matlab location library to read complex output of FFT
+data_oct = read_complex_binary('/home/furonics/GNURadio/droneMove.dat') %Read the complex output of FFT
+amplitude = abs(data_oct) %Calculate the amplitude of the output
+Fs = 20 * 10^6 % Sampling Rate of 20 MHz
+T = 1/Fs % Time period of capture
+L = length(amplitude) %Capturing the size as input.
+t = (0:L-1)*T %Creating x axis with time as required based on input size
+plot(t,amplitude) %Plotting graph of amplitude across time.
