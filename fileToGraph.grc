@@ -128,7 +128,7 @@
     </param>
     <param>
       <key>file</key>
-      <value>/home/furonics/GNURadio/test</value>
+      <value>/home/furonics/GNURadio/25Feb2016Motion.dat</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -195,7 +195,7 @@
     </param>
     <param>
       <key>fft_size</key>
-      <value>1024</value>
+      <value>64</value>
     </param>
     <param>
       <key>freqvar</key>

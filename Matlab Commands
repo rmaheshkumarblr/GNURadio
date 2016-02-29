@@ -6,3 +6,26 @@ T = 1/Fs % Time period of capture
 L = length(amplitude) %Capturing the size as input.
 t = (0:L-1)*T %Creating x axis with time as required based on input size
 plot(t,amplitude) %Plotting graph of amplitude across time.
+
+
+Fs = 20 * 10^6
+T = 1/Fs
+addpath('/home/furonics/gnuradio/gr-utils/octave')
+data_oct = read_complex_binary('/home/furonics/GNURadio/droneMove.dat')
+amplitudeDroneMove = abs(data_oct)
+L = length(amplitudeDroneMove)
+tDroneMove = (0:L-1)*T
+data_oct = read_complex_binary('/home/furonics/GNURadio/droneMoveInHand.dat');
+amplitudeDroneMoveInHand = abs(data_oct);
+L = length(amplitudeDroneMoveInHand);
+tDroneMoveInHand = (0:L-1)*T
+data_oct = read_complex_binary('/home/furonics/GNURadio/takeOff.dat');
+amplitudeTakeOff = abs(data_oct);
+L = length(amplitudeTakeOff);
+tDroneTakeOff = (0:L-1)*T
+subplot(3,1,1)
+plot(tDroneTakeOff,amplitudeTakeOff)
+subplot(3,1,2)
+plot(tDroneMove,amplitudeDroneMove)
+subplot(3,1,3)
+plot(tDroneMoveInHand,amplitudeDroneMoveInHand)

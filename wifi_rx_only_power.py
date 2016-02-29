@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Wifi Rx Only Power
-# Generated: Mon Feb  8 16:22:19 2016
+# Generated: Fri Feb 26 16:21:00 2016
 ##################################################
 
 if __name__ == '__main__':
@@ -49,11 +49,11 @@ class wifi_rx_only_power(grc_wxgui.top_block_gui):
         ##################################################
         self.window_size = window_size = 48
         self.sync_length = sync_length = 320
-        self.samp_rate = samp_rate = 10e6
+        self.samp_rate = samp_rate = 20e6
         self.lo_offset = lo_offset = 11e6
         self.gain = gain = 20
-        self.freq = freq = 5.89e9
-        self.chan_est = chan_est = 1
+        self.freq = freq = 5.805e9
+        self.chan_est = chan_est = 0
 
         ##################################################
         # Blocks
@@ -177,7 +177,7 @@ class wifi_rx_only_power(grc_wxgui.top_block_gui):
         	ref_level=gain,
         	ref_scale=2.0,
         	sample_rate=samp_rate,
-        	fft_size=1024,
+        	fft_size=64,
         	fft_rate=15,
         	average=True,
         	avg_alpha=None,
@@ -210,9 +210,9 @@ class wifi_rx_only_power(grc_wxgui.top_block_gui):
         self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_gr_complex*1, 64)
         self.blocks_pdu_to_tagged_stream_0 = blocks.pdu_to_tagged_stream(blocks.float_t, "packet_len")
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
-        self.blocks_file_sink_1 = blocks.file_sink(gr.sizeof_gr_complex*1, "/home/furonics/GNURadio/test", False)
+        self.blocks_file_sink_1 = blocks.file_sink(gr.sizeof_gr_complex*1, "/home/furonics/GNURadio/25Feb2016DataTransfer.dat", False)
         self.blocks_file_sink_1.set_unbuffered(False)
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, "/home/furonics/GNURadio/ofdm4thFeb2016_1.pcap", True)
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, "/home/furonics/GNURadio/11thFeb2016_AtHome.pcap", False)
         self.blocks_file_sink_0.set_unbuffered(True)
         self.blocks_divide_xx_0 = blocks.divide_ff(1)
         self.blocks_delay_0_0 = blocks.delay(gr.sizeof_gr_complex*1, 16)
